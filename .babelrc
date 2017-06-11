@@ -1,0 +1,23 @@
+{
+  "presets": ["react", "es2015"],
+  "plugins": [
+    "add-module-exports",
+    "syntax-object-rest-spread",
+    "transform-object-rest-spread",
+    "transform-decorators-legacy",
+    "transform-class-properties"
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        ["react-transform", {
+            "transforms": [{
+                "transform": "react-transform-catch-errors",
+                "imports": ["react", "redbox-react"]
+              }
+            ]
+        }]
+      ]
+    }
+  }
+}

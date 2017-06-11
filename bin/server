@@ -1,0 +1,127 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const express = require('express');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+
+const ROOT = path.resolve(path.join(__dirname, '..'));
+
+const app = express();
+app.set('port', process.env.PORT || 3000);
+app.use(express.static(path.join(ROOT, '/public')));
+
+const compiler = webpack(require('../webpack/webpack.config.development'));
+app.use(webpackDevMiddleware(compiler, {
+  noInfo: false,
+  stats: {
+    colors: true
+  }
+}));
+
+app.use(webpackHotMiddleware(compiler));
+
+app.all('*', (req, res, next) => {
+  console.log('%s %s', req.method, req.url);
+  next();
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(ROOT, '/public/index.html'));
+});
+
+app.listen(app.get('port'), () => {
+  console.log('Server listening on port %s', app.get('port'));
+});
+
+// // Apply CLI dashboard for your webpack dev server
+// // compiler.apply(new DashboardPlugin());
+
+// const ROOT = path.resolve(path.join(__dirname, '..'));
+// const host = process.env.HOST || 'localhost';
+// const port = process.env.PORT || 3000;
+
+// function log() {
+//   arguments[0] = '\nWebpack: ' + arguments[0];
+//   console.log.apply(console, arguments);
+// }
+
+// app.use(webpackDevMiddleware(compiler, {
+//   noInfo: true,
+//   publicPath: config.output.publicPath,
+//   stats: {
+//     colors: true
+//   },
+//   historyApiFallback: true
+// }));
+
+// app.use(webpackHotMiddleware(compiler));
+
+// app.all('*', (req, res, next) => {
+//   console.log('%s %s', req.method, req.url);
+//   next();
+// });
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(ROOT, '/public/index.html'));
+// });
+
+// app.listen(port, host, (err) => {
+
+//   if (err) {
+//     return log(err);
+//   }
+
+//   log('🚧  App is listening at http://%s:%s', host, port);
+
+// });
+
+// var http = require('http');
+// var path = require('path');
+
+// var express = require('express');
+
+// var app = express();
+
+// const root = path.resolve(path.join(__dirname, '..'));
+
+// // app.use(require('morgan')('short'));
+
+// // ************************************
+// // This is the real meat of the example
+// // ************************************
+// (function() {
+
+//   // Step 1: Create & configure a webpack compiler
+//   var webpack = require('webpack');
+//   var webpackConfig = require(process.env.WEBPACK_CONFIG ? process.env.WEBPACK_CONFIG : '../webpack/webpack.config.development');
+//   var compiler = webpack(webpackConfig);
+
+//   // Step 2: Attach the dev middleware to the compiler & the server
+//   app.use(require("webpack-dev-middleware")(compiler, {
+//     noInfo: true, publicPath: webpackConfig.output.publicPath
+//   }));
+
+//   // Step 3: Attach the hot middleware to the compiler & the server
+//   app.use(require("webpack-hot-middleware")(compiler, {
+//     log: console.log, path: '/__webpack_hmr', heartbeat: 10 * 1000
+//   }));
+// })();
+
+// // Do anything you like with the rest of your express application.
+
+// app.get("/", function(req, res) {
+//   res.sendFile(path.join(root, '/public/index.html'));
+// });
+// // app.get("/multientry", function(req, res) {
+// //   res.sendFile(__dirname + '/index-multientry.html');
+// // });
+
+// if (require.main === module) {
+//   var server = http.createServer(app);
+//   server.listen(process.env.PORT || 1616, function() {
+//     console.log("Listening on %j", server.address());
+//   });
+// }
+

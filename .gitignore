@@ -1,0 +1,4 @@
+node_modules
+public/*.map
+public/*.min.js
+public/*.min.css
